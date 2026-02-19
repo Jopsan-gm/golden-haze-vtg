@@ -1,15 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Hero from '@/components/Hero';
 import FilterBar from '@/components/FilterBar';
 import ProductGrid from '@/components/ProductGrid';
 import Footer from '@/components/Footer';
-import { products } from '@/data/products';
-import { Category } from '@/types/product';
+import { supabase } from '@/utils/supabase';
+import { Product, Category } from '@/types/product';
 
 export default function Home() {
     const [activeCategory, setActiveCategory] = useState<Category | 'All'>('All');
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching products:', error);
+            } else {
+                setProducts(data || []);
+            }
+            setLoading(false);
+        };
+
+        fetchProducts();
+    }, []);
 
     // Extract unique categories from products
     const categories: Category[] = Array.from(

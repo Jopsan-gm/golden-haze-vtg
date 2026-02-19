@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { products } from '@/data/products';
+import { supabase } from '@/utils/supabase';
+import { Product } from '@/types/product';
 import { getWhatsAppLink } from '@/utils/whatsapp';
 import { MessageCircle, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '@/components/Footer';
@@ -10,8 +11,38 @@ import Footer from '@/components/Footer';
 export default function ProductDetail() {
     const { id } = useParams();
     const router = useRouter();
-    const product = products.find((p) => p.id === id);
+    const [product, setProduct] = useState<Product | null>(null);
+    const [loading, setLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchProduct = async () => {
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error) {
+                console.error('Error fetching product:', error);
+            } else {
+                setProduct(data);
+            }
+            setLoading(false);
+        };
+
+        fetchProduct();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+            </div>
+        );
+    }
 
     if (!product) {
         return (

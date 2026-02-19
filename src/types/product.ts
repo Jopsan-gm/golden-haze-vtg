@@ -7,5 +7,5 @@ export interface Product {
     description: string;
     category: Category;
     images: string[];
-    isSoldOut?: boolean;
+    is_sold_out?: boolean;
 }

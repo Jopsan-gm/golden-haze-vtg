@@ -29,7 +29,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     PROMO XTRA
                 </div>
 
-                {product.isSoldOut && (
+                {product.is_sold_out && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
                         <span className="text-white uppercase text-xs font-bold border-2 border-white px-2 py-1 transform -rotate-12">
                             Agotado
