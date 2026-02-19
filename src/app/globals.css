@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vintage-cream: #F5F5DC;
+  --color-vintage-beige: #F2E8CF;
+  --color-vintage-brown-light: #A68A64;
+  --color-vintage-brown: #582F0E;
+  --color-vintage-brown-dark: #331800;
+  --color-vintage-olive: #6B705C;
+  --color-vintage-clay: #A44A3F;
+  --color-vintage-gold: #BC6C25;
+
+  --font-serif: var(--font-playfair), serif;
+  --font-sans: var(--font-inter), sans-serif;
+}
+
+:root {
+  --background: #F2E8CF;
+  --foreground: #331800;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-inter), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+.serif {
+  font-family: var(--font-playfair), serif;
+}
+
+/* Custom Vintage Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5DC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #582F0E;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #BC6C25;
+}
