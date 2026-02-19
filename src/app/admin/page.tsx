@@ -216,7 +216,7 @@ export default function AdminPage() {
         <div className="min-h-screen bg-gray-50 pb-20">
             {/* Mobile Header */}
             <div className="bg-white shadow-sm sticky top-0 z-30 px-6 py-4 flex justify-between items-center">
-                <h1 className="text-xl font-serif font-bold text-slate-900">Panel Admin</h1>
+                <h1 className="text-xl font-serif font-bold text-slate-900">Panel Admin v2.0</h1>
                 <button onClick={() => setIsAuthenticated(false)} className="text-xs font-bold uppercase tracking-widest text-red-500">
                     Salir
                 </button>
@@ -386,8 +386,8 @@ export default function AdminPage() {
                                         <button
                                             onClick={() => handleToggleSoldOut(product.id, product.is_sold_out)}
                                             className={`flex-1 py-1.5 px-3 rounded-md text-xs font-bold text-center transition ${product.is_sold_out
-                                                    ? 'bg-green-100 text-green-700'
-                                                    : 'bg-slate-100 text-slate-600'
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-slate-100 text-slate-600'
                                                 }`}
                                         >
                                             {product.is_sold_out ? 'Marcar Disponible' : 'Marcar Agotado'}
