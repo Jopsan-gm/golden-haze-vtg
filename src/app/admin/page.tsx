@@ -213,160 +213,201 @@ export default function AdminPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Panel de Administración</h1>
-                    <div className="flex gap-2 md:gap-4 w-full md:w-auto">
-                        <button
-                            onClick={handleMigration}
-                            className="flex-1 md:flex-none px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-bold text-sm"
-                            disabled={loading}
-                        >
-                            {loading ? '...' : 'Restaurar'}
-                        </button>
-                        <button onClick={() => setIsAuthenticated(false)} className="flex-1 md:flex-none px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 text-sm font-bold">Salir</button>
-                    </div>
+        <div className="min-h-screen bg-gray-50 pb-20">
+            {/* Mobile Header */}
+            <div className="bg-white shadow-sm sticky top-0 z-30 px-6 py-4 flex justify-between items-center">
+                <h1 className="text-xl font-serif font-bold text-slate-900">Panel Admin</h1>
+                <button onClick={() => setIsAuthenticated(false)} className="text-xs font-bold uppercase tracking-widest text-red-500">
+                    Salir
+                </button>
+            </div>
+
+            <div className="max-w-2xl mx-auto p-4 space-y-8">
+
+                {/* Actions Toolbar */}
+                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
+                    <p className="text-sm text-gray-500 font-medium">Gestión de Catálogo</p>
+                    <button
+                        onClick={handleMigration}
+                        className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition"
+                        disabled={loading}
+                    >
+                        {loading ? '...' : '↺ Restaurar Backup'}
+                    </button>
                 </div>
 
                 {/* Create Product Form */}
-                <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm mb-8">
-                    <h2 className="text-xl font-bold mb-4">Añadir Nuevo Producto</h2>
-                    <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input
-                            type="text"
-                            placeholder="Nombre del Producto"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            className="p-3 border rounded w-full"
-                            required
-                        />
-                        <input
-                            type="number"
-                            placeholder="Precio (₡)"
-                            value={formData.price}
-                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                            className="p-3 border rounded w-full"
-                            required
-                        />
-                        <textarea
-                            placeholder="Descripción"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            className="p-3 border rounded md:col-span-2 w-full"
-                            rows={3}
-                            required
-                        />
-                        <select
-                            value={formData.category}
-                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                            className="p-3 border rounded w-full"
-                        >
-                            <option value="T-Shirts">Camisetas</option>
-                            <option value="Pants">Pantalones</option>
-                            <option value="Jackets">Chaquetas</option>
-                            <option value="Accessories">Accesorios</option>
-                        </select>
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+                        <span className="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center text-sm">＋</span>
+                        Nuevo Producto
+                    </h2>
 
-                        <div className="md:col-span-2 space-y-2">
-                            <label className="block text-sm font-bold text-gray-700">Imágenes</label>
-
-                            {/* File Upload Button */}
-                            <div className="flex gap-2">
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    className="hidden"
-                                    ref={fileInputRef}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => fileInputRef.current?.click()}
-                                    disabled={uploading}
-                                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center gap-2 transition"
-                                >
-                                    {uploading ? 'Subiendo...' : '📷 Subir desde Galería'}
-                                </button>
-                            </div>
-
+                    <form onSubmit={handleCreate} className="space-y-4">
+                        <div>
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Nombre</label>
                             <input
                                 type="text"
-                                placeholder="O pega URLs de imágenes aquí (separadas por coma)"
-                                value={formData.images}
-                                onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                                className="p-3 border rounded w-full text-sm"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium"
+                                placeholder="Ej. Pantalón Carhartt"
+                                required
                             />
-                            <p className="text-xs text-gray-400">Puedes mezclar fotos subidas y links externos.</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Precio</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-gray-400 font-bold">₡</span>
+                                    <input
+                                        type="number"
+                                        value={formData.price}
+                                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                        className="w-full p-3 pl-8 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-bold text-gray-800"
+                                        placeholder="8000"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Categoría</label>
+                                <select
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                    className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium text-gray-600 appearance-none"
+                                >
+                                    <option value="T-Shirts">Camisetas</option>
+                                    <option value="Pants">Pantalones</option>
+                                    <option value="Jackets">Chaquetas</option>
+                                    <option value="Accessories">Accesorios</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Descripción</label>
+                            <textarea
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none text-sm text-gray-600"
+                                rows={3}
+                                placeholder="Detalles de la prenda..."
+                                required
+                            />
+                        </div>
+
+                        <div className="pt-2">
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Fotos</label>
+
+                            <div className="flex flex-col gap-3">
+                                {/* Gallery Upload Button */}
+                                <div className="flex gap-2">
+                                    <input
+                                        type="file"
+                                        multiple
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                        ref={fileInputRef}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={uploading}
+                                        className="w-full py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl text-gray-500 font-bold hover:bg-gray-100 transition flex flex-col items-center justify-center gap-2 active:scale-95 transform duration-100"
+                                    >
+                                        {uploading ? (
+                                            <span className="animate-pulse">Subiendo...</span>
+                                        ) : (
+                                            <>
+                                                <span className="text-2xl">📷</span>
+                                                <span className="text-sm">Tocar para subir fotos</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+
+                                {formData.images && (
+                                    <div className="bg-gray-50 p-3 rounded-lg flex items-center gap-2 overflow-x-auto">
+                                        {formData.images.split(',').map((img, idx) => img && (
+                                            <div key={idx} className="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden bg-white border border-gray-200 relative">
+                                                <img src={img.trim()} className="w-full h-full object-cover" />
+                                            </div>
+                                        ))}
+                                        {formData.images.split(',').filter(Boolean).length > 0 && (
+                                            <span className="text-xs text-gray-400 whitespace-nowrap px-2">
+                                                {formData.images.split(',').filter(Boolean).length} fotos seleccionadas
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <button
                             type="submit"
-                            className="md:col-span-2 bg-green-600 text-white py-3 rounded font-bold hover:bg-green-700 transition w-full"
+                            className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold shadow-lg hover:bg-black active:scale-95 transition-all duration-200 mt-4 text-sm uppercase tracking-widest"
                             disabled={loading}
                         >
-                            {loading ? 'Guardando...' : 'Crear Producto'}
+                            {loading ? 'Guardando...' : 'Publicar Prenda'}
                         </button>
                     </form>
                 </div>
 
-                {/* Products List */}
-                <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <h2 className="text-xl font-bold p-6 border-b">Inventario Actual</h2>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="p-4">Imagen</th>
-                                    <th className="p-4">Nombre</th>
-                                    <th className="p-4">Precio</th>
-                                    <th className="p-4">Categoría</th>
-                                    <th className="p-4">Estado</th>
-                                    <th className="p-4">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {products.map((product) => (
-                                    <tr key={product.id} className="border-b last:border-0 hover:bg-gray-50">
-                                        <td className="p-4">
-                                            {product.images && product.images[0] && (
-                                                <img src={product.images[0]} alt={product.name} className="w-12 h-12 object-cover rounded" />
-                                            )}
-                                        </td>
-                                        <td className="p-4 font-medium">{product.name}</td>
-                                        <td className="p-4">₡{product.price.toLocaleString()}</td>
-                                        <td className="p-4 text-sm text-gray-500">{product.category}</td>
-                                        <td className="p-4">
-                                            <button
-                                                onClick={() => handleToggleSoldOut(product.id, product.is_sold_out)}
-                                                className={`px-3 py-1 rounded-full text-xs font-bold ${product.is_sold_out
-                                                    ? 'bg-red-100 text-red-800'
-                                                    : 'bg-green-100 text-green-800'
-                                                    }`}
-                                            >
-                                                {product.is_sold_out ? 'AGOTADO' : 'DISPONIBLE'}
-                                            </button>
-                                        </td>
-                                        <td className="p-4">
-                                            <button
-                                                onClick={() => handleDelete(product.id)}
-                                                className="text-red-600 hover:text-red-800 font-medium text-sm"
-                                            >
-                                                Eliminar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {products.length === 0 && (
-                                    <tr>
-                                        <td colSpan={6} className="p-8 text-center text-gray-500">
-                                            No hay productos en la base de datos.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                {/* Inventory List (Mobile Cards) */}
+                <div>
+                    <h2 className="text-lg font-bold mb-4 px-2 text-gray-900">Inventario ({products.length})</h2>
+                    <div className="grid grid-cols-1 gap-4">
+                        {products.map((product) => (
+                            <div key={product.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 items-center">
+                                {/* Image Thumbnail */}
+                                <div className="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
+                                    {product.images && product.images[0] ? (
+                                        <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-300">No img</div>
+                                    )}
+                                    {product.is_sold_out && (
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                            <span className="text-[10px] font-bold text-white uppercase transform -rotate-12 border border-white px-1">Agotado</span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="font-bold text-gray-900 truncate pr-4">{product.name}</h3>
+                                    <p className="text-vintage-gold font-bold text-sm">₡{product.price.toLocaleString()}</p>
+                                    <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">{product.category}</p>
+
+                                    <div className="flex gap-2 mt-3">
+                                        <button
+                                            onClick={() => handleToggleSoldOut(product.id, product.is_sold_out)}
+                                            className={`flex-1 py-1.5 px-3 rounded-md text-xs font-bold text-center transition ${product.is_sold_out
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : 'bg-slate-100 text-slate-600'
+                                                }`}
+                                        >
+                                            {product.is_sold_out ? 'Marcar Disponible' : 'Marcar Agotado'}
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(product.id)}
+                                            className="px-3 py-1.5 bg-red-50 text-red-500 rounded-md text-xs font-bold"
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {products.length === 0 && (
+                            <div className="text-center py-10 text-gray-400 bg-white rounded-xl border border-dashed border-gray-200">
+                                <p>No hay productos en el inventario.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
