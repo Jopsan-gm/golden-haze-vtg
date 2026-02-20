@@ -14,8 +14,12 @@ const Navbar = () => {
             <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-transparent pointer-events-none">
                 {/* Logo Area */}
                 <div className="pointer-events-auto">
-                    <Link href="/" className="text-xl font-serif font-bold text-white drop-shadow-lg">
-                        GH <span className="italic text-vintage-gold">Vtg</span>
+                    <Link href="/" className="block">
+                        <img
+                            src="/images/Golden-Haze-VTG-removebg-preview.png"
+                            alt="Golden Haze Vtg Logo"
+                            className="h-16 w-auto drop-shadow-lg scale-125 md:scale-150 transition-transform hover:scale-110 active:scale-95"
+                        />
                     </Link>
                 </div>
 
