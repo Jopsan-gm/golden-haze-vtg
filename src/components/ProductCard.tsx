@@ -44,10 +44,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     {product.name}
                 </h3>
 
-                <div className="flex flex-col gap-1">
-                    <div className="text-vintage-gold font-bold text-lg">
-                        ₡{product.price.toLocaleString()}
-                    </div>
+                <div className="flex flex-col gap-0.5">
+                    {product.discount_price ? (
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-orange-600 font-bold text-lg leading-none">
+                                ₡{product.discount_price.toLocaleString()}
+                            </span>
+                            <span className="text-gray-400 line-through text-[10px]">
+                                ₡{product.price.toLocaleString()}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="text-vintage-gold font-bold text-lg leading-none">
+                            ₡{product.price.toLocaleString()}
+                        </div>
+                    )}
                     <span className="text-[10px] text-gray-400 uppercase tracking-tighter">
                         {product.category}
                     </span>

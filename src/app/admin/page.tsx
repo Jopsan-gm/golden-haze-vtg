@@ -14,7 +14,14 @@ export default function AdminPage() {
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | null }>({ message: '', type: null });
+    const [showConfirm, setShowConfirm] = useState<{ show: boolean; message: string; onConfirm: () => void } | null>(null);
     const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+    const showToast = (message: string, type: 'success' | 'error') => {
+        setNotification({ message, type });
+        setTimeout(() => setNotification({ message: '', type: null }), 3000);
+    };
 
     // Form state
     const [formData, setFormData] = useState({
@@ -23,6 +30,7 @@ export default function AdminPage() {
         description: '',
         category: 'T-Shirts',
         images: '',
+        discountPrice: '',
     });
 
     const fetchProducts = async () => {
@@ -48,28 +56,34 @@ export default function AdminPage() {
 
     // Migration function
     const handleMigration = async () => {
-        if (!confirm('¿Estás seguro? Esto copiará los productos del código a la base de datos.')) return;
-        setLoading(true);
-        try {
-            const productsToInsert = localProducts.map(p => ({
-                name: p.name,
-                price: p.price,
-                description: p.description,
-                category: p.category,
-                images: p.images,
-                is_sold_out: false
-            }));
+        setShowConfirm({
+            show: true,
+            message: '¿Estás seguro? Esto copiará los productos del código a la base de datos.',
+            onConfirm: async () => {
+                setShowConfirm(null);
+                setLoading(true);
+                try {
+                    const productsToInsert = localProducts.map(p => ({
+                        name: p.name,
+                        price: p.price,
+                        description: p.description,
+                        category: p.category,
+                        images: p.images,
+                        is_sold_out: false
+                    }));
 
-            const { error } = await supabase.from('products').insert(productsToInsert);
-            if (error) throw error;
+                    const { error } = await supabase.from('products').insert(productsToInsert);
+                    if (error) throw error;
 
-            alert('¡Productos migrados exitosamente!');
-            fetchProducts();
-        } catch (error: any) {
-            alert('Error en la migración: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
+                    showToast('¡Productos migrados exitosamente!', 'success');
+                    fetchProducts();
+                } catch (error: any) {
+                    showToast('Error en la migración: ' + error.message, 'error');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
     };
 
     const handleLogin = (e: React.FormEvent) => {
@@ -77,7 +91,7 @@ export default function AdminPage() {
         if (password === ADMIN_PASSWORD) {
             setIsAuthenticated(true);
         } else {
-            alert('Contraseña incorrecta');
+            showToast('Contraseña incorrecta', 'error');
         }
     };
 
@@ -95,39 +109,46 @@ export default function AdminPage() {
                         description: formData.description,
                         category: formData.category,
                         images: formData.images.split(',').map(url => url.trim()),
-                        is_sold_out: false
+                        is_sold_out: false,
+                        discount_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null
                     }
                 ]);
 
             if (error) throw error;
 
-            alert('Producto creado con éxito!');
-            setFormData({ name: '', price: '', description: '', category: 'T-Shirts', images: '' });
+            showToast('Producto creado con éxito!', 'success');
+            setFormData({ name: '', price: '', description: '', category: 'T-Shirts', images: '', discountPrice: '' });
             fetchProducts();
         } catch (error: any) {
-            alert('Error al crear producto: ' + error.message);
+            showToast('Error al crear producto: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+        setShowConfirm({
+            show: true,
+            message: '¿Estás seguro de eliminar este producto?',
+            onConfirm: async () => {
+                setShowConfirm(null);
+                setLoading(true);
+                try {
+                    const { error } = await supabase
+                        .from('products')
+                        .delete()
+                        .eq('id', id);
 
-        setLoading(true);
-        try {
-            const { error } = await supabase
-                .from('products')
-                .delete()
-                .eq('id', id);
-
-            if (error) throw error;
-            fetchProducts();
-        } catch (error: any) {
-            alert('Error al eliminar: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
+                    if (error) throw error;
+                    fetchProducts();
+                    showToast('Producto eliminado', 'success');
+                } catch (error: any) {
+                    showToast('Error al eliminar: ' + error.message, 'error');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        });
     };
 
     const handleToggleSoldOut = async (id: string, currentStatus: boolean) => {
@@ -140,8 +161,54 @@ export default function AdminPage() {
 
             if (error) throw error;
             fetchProducts();
+            showToast('Estado actualizado', 'success');
         } catch (error: any) {
-            alert('Error al actualizar estado: ' + error.message);
+            showToast('Error al actualizar estado: ' + error.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleApplyDiscount = async (id: string, currentPrice: number) => {
+        const discountInput = prompt('Ingresa el NUEVO PRECIO con descuento (₡):', '');
+        if (discountInput === null) return;
+
+        const newPrice = parseFloat(discountInput);
+        if (isNaN(newPrice)) {
+            showToast('Precio no válido', 'error');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ discount_price: newPrice })
+                .eq('id', id);
+
+            if (error) throw error;
+            fetchProducts();
+            showToast('Descuento aplicado', 'success');
+        } catch (error: any) {
+            showToast('Error al aplicar descuento: ' + error.message, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleRemoveDiscount = async (id: string) => {
+        setLoading(true);
+        try {
+            const { error } = await supabase
+                .from('products')
+                .update({ discount_price: null })
+                .eq('id', id);
+
+            if (error) throw error;
+            fetchProducts();
+            showToast('Descuento eliminado', 'success');
+        } catch (error: any) {
+            showToast('Error al eliminar descuento: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -179,9 +246,9 @@ export default function AdminPage() {
             const newImages = [...currentImages, ...uploadedUrls].join(', ');
 
             setFormData({ ...formData, images: newImages });
-            alert('¡Imágenes subidas correctamente!');
+            showToast('¡Imágenes subidas correctamente!', 'success');
         } catch (error: any) {
-            alert('Error al subir imagen: ' + error.message);
+            showToast('Error al subir imagen: ' + error.message, 'error');
         } finally {
             setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -262,7 +329,7 @@ export default function AdminPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Precio</label>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Precio Original</label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-3 text-gray-400 font-bold">₡</span>
                                     <input
@@ -276,18 +343,32 @@ export default function AdminPage() {
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Categoría</label>
-                                <select
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium text-gray-600 appearance-none"
-                                >
-                                    <option value="T-Shirts">Camisetas</option>
-                                    <option value="Pants">Pantalones</option>
-                                    <option value="Jackets">Chaquetas</option>
-                                    <option value="Accessories">Accesorios</option>
-                                </select>
+                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block text-orange-500">Precio Oferta (Opcional)</label>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-3 text-orange-300 font-bold">₡</span>
+                                    <input
+                                        type="number"
+                                        value={formData.discountPrice}
+                                        onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })}
+                                        className="w-full p-3 pl-8 bg-orange-50 border-none rounded-lg focus:ring-2 focus:ring-orange-400 transition outline-none font-bold text-orange-700"
+                                        placeholder="6500"
+                                    />
+                                </div>
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Categoría</label>
+                            <select
+                                value={formData.category}
+                                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium text-gray-600 appearance-none"
+                            >
+                                <option value="T-Shirts">Camisetas</option>
+                                <option value="Pants">Pantalones</option>
+                                <option value="Jackets">Chaquetas</option>
+                                <option value="Accessories">Accesorios</option>
+                            </select>
                         </div>
 
                         <div>
@@ -379,19 +460,45 @@ export default function AdminPage() {
 
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-bold text-gray-900 truncate pr-4">{product.name}</h3>
-                                    <p className="text-vintage-gold font-bold text-sm">₡{product.price.toLocaleString()}</p>
-                                    <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">{product.category}</p>
+                                    <div className="flex items-center gap-2">
+                                        {product.discount_price ? (
+                                            <>
+                                                <span className="text-orange-600 font-bold text-sm">₡{product.discount_price.toLocaleString()}</span>
+                                                <span className="text-gray-400 line-through text-[10px]">₡{product.price.toLocaleString()}</span>
+                                            </>
+                                        ) : (
+                                            <span className="text-vintage-gold font-bold text-sm">₡{product.price.toLocaleString()}</span>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-gray-400 mt-0.5 uppercase tracking-wider">{product.category}</p>
 
-                                    <div className="flex gap-2 mt-3">
+                                    <div className="flex flex-wrap gap-2 mt-3">
                                         <button
                                             onClick={() => handleToggleSoldOut(product.id, product.is_sold_out)}
-                                            className={`flex-1 py-1.5 px-3 rounded-md text-xs font-bold text-center transition ${product.is_sold_out
+                                            className={`flex-1 min-w-[120px] py-1.5 px-3 rounded-md text-xs font-bold text-center transition ${product.is_sold_out
                                                 ? 'bg-green-100 text-green-700'
                                                 : 'bg-slate-100 text-slate-600'
                                                 }`}
                                         >
                                             {product.is_sold_out ? 'Marcar Disponible' : 'Marcar Agotado'}
                                         </button>
+
+                                        {product.discount_price ? (
+                                            <button
+                                                onClick={() => handleRemoveDiscount(product.id)}
+                                                className="flex-1 min-w-[100px] py-1.5 px-3 bg-orange-100 text-orange-600 rounded-md text-xs font-bold"
+                                            >
+                                                Quitar Oferta
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleApplyDiscount(product.id, product.price)}
+                                                className="flex-1 min-w-[100px] py-1.5 px-3 bg-vintage-gold/10 text-vintage-gold rounded-md text-xs font-bold"
+                                            >
+                                                % Descuento
+                                            </button>
+                                        )}
+
                                         <button
                                             onClick={() => handleDelete(product.id)}
                                             className="px-3 py-1.5 bg-red-50 text-red-500 rounded-md text-xs font-bold"
@@ -411,6 +518,38 @@ export default function AdminPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Custom Notification Toast */}
+            {notification.message && (
+                <div className={`fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-full shadow-2xl text-white font-bold transition-all transform animate-bounce-short ${notification.type === 'success' ? 'bg-green-600' : 'bg-red-600'
+                    }`}>
+                    {notification.message}
+                </div>
+            )}
+
+            {/* Custom Confirmation Modal */}
+            {showConfirm?.show && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl transform animate-scale-in">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">¿Confirmar acción?</h3>
+                        <p className="text-gray-500 mb-6">{showConfirm.message}</p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowConfirm(null)}
+                                className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold active:scale-95 transition"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={showConfirm.onConfirm}
+                                className="flex-1 py-3 bg-black text-white rounded-xl font-bold active:scale-95 transition"
+                            >
+                                Aceptar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -8,4 +8,5 @@ export interface Product {
     category: Category;
     images: string[];
     is_sold_out?: boolean;
+    discount_price?: number;
 }

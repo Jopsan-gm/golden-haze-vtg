@@ -39,42 +39,42 @@ const Navbar = () => {
 
             {/* Sidebar Menu */}
             <aside
-                className={`fixed top-0 right-0 h-full w-80 bg-white z-[70] shadow-2xl transition-transform duration-500 ease-in-out transform ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+                className={`fixed top-0 right-0 h-full w-64 bg-white z-[70] shadow-2xl transition-transform duration-500 ease-in-out transform ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
             >
-                <div className="p-10 flex flex-col h-full">
-                    <div className="flex justify-between items-center mb-16">
-                        <span className="font-serif font-bold text-2xl">Menu</span>
-                        <button onClick={toggleMenu} className="p-2 text-gray-400 hover:text-black">
-                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="p-8 flex flex-col h-full">
+                    <div className="flex justify-between items-center mb-10">
+                        <span className="font-serif font-bold text-xl uppercase tracking-widest text-gray-400">Menu</span>
+                        <button onClick={toggleMenu} className="p-2 text-gray-400 hover:text-black transition-colors">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
 
-                    <nav className="flex flex-col gap-8">
+                    <nav className="flex flex-col gap-6">
                         <Link
                             href="/"
                             onClick={toggleMenu}
-                            className="text-3xl font-serif font-bold hover:text-vintage-gold transition-colors"
+                            className="text-xl font-serif font-bold hover:text-vintage-gold transition-colors"
                         >
                             Catálogo
                         </Link>
                         <Link
                             href="#nosotros"
                             onClick={toggleMenu}
-                            className="text-3xl font-serif font-bold hover:text-vintage-gold transition-colors"
+                            className="text-xl font-serif font-bold hover:text-vintage-gold transition-colors"
                         >
                             Nuestra Historia
                         </Link>
 
-                        <div className="h-px bg-gray-100 my-4" />
+                        <div className="h-px bg-gray-100 my-2" />
 
                         <Link
                             href="/admin"
                             onClick={toggleMenu}
-                            className="flex items-center gap-3 text-lg font-sans font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+                            className="flex items-center gap-2 text-sm font-sans font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
                         >
-                            <span className="text-2xl text-vintage-gold">✦</span> Acceso Admin
+                            <span className="text-xl text-vintage-gold">✦</span> Acceso Admin
                         </Link>
                     </nav>
 
