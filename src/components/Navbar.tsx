@@ -11,14 +11,14 @@ const Navbar = () => {
     return (
         <>
             {/* Main Navbar */}
-            <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 flex justify-between items-center bg-transparent pointer-events-none">
+            <nav className="fixed top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center bg-transparent pointer-events-none transition-all duration-300">
                 {/* Logo Area */}
                 <div className="pointer-events-auto">
                     <Link href="/" className="block">
                         <img
                             src="/images/Golden-Haze-VTG-removebg-preview.png"
                             alt="Golden Haze Vtg Logo"
-                            className="h-16 w-auto drop-shadow-lg scale-125 md:scale-150 transition-transform hover:scale-110 active:scale-95"
+                            className="h-24 md:h-32 w-auto drop-shadow-2xl transition-transform hover:scale-105 active:scale-95"
                         />
                     </Link>
                 </div>
