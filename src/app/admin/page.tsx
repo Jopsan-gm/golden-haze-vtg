@@ -257,11 +257,18 @@ export default function AdminPage() {
 
     if (!isAuthenticated) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-                <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm relative">
+            <div className="min-h-screen flex flex-col items-center justify-start bg-gray-50 p-4 pt-20 sm:pt-32">
+                <div className="w-full max-w-sm flex flex-col items-center mb-8">
+                    <img
+                        src="/images/Golden-Haze-VTG-removebg-preview.png"
+                        alt="Golden Haze Logo"
+                        className="h-32 md:h-40 w-auto drop-shadow-xl"
+                    />
+                </div>
+                <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm relative border border-gray-100">
                     <Link
                         href="/"
-                        className="absolute top-4 left-4 text-gray-400 hover:text-black transition-colors flex items-center gap-1 text-sm font-bold"
+                        className="absolute top-4 left-4 text-gray-300 hover:text-black transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest"
                     >
                         ← <span className="hidden sm:inline">Volver</span>
                     </Link>
