@@ -1,5 +1,6 @@
 import { Category } from '@/types/product';
 import React from 'react';
+import { motion } from 'framer-motion';
 
 interface FilterBarProps {
     categories: Category[];
@@ -9,12 +10,18 @@ interface FilterBarProps {
 
 const FilterBar = ({ categories, activeCategory, onCategoryChange }: FilterBarProps) => {
     return (
-        <div className="flex flex-wrap justify-center gap-2 py-8 px-4" id="catalogo">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-wrap justify-center gap-2 py-8 px-4"
+            id="catalogo"
+        >
             <button
                 onClick={() => onCategoryChange('All')}
                 className={`px-4 py-1.5 rounded-sm text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeCategory === 'All'
-                        ? 'bg-black text-white'
-                        : 'bg-white text-gray-400 border border-gray-100'
+                    ? 'bg-black text-white'
+                    : 'bg-white text-gray-400 border border-gray-100'
                     }`}
             >
                 Todo
@@ -24,8 +31,8 @@ const FilterBar = ({ categories, activeCategory, onCategoryChange }: FilterBarPr
                     key={cat}
                     onClick={() => onCategoryChange(cat)}
                     className={`px-4 py-1.5 rounded-sm text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeCategory === cat
-                            ? 'bg-black text-white'
-                            : 'bg-white text-gray-400 border border-gray-100'
+                        ? 'bg-black text-white'
+                        : 'bg-white text-gray-400 border border-gray-100'
                         }`}
                 >
                     {cat === 'Jackets' ? 'Chaquetas' :
@@ -35,7 +42,7 @@ const FilterBar = ({ categories, activeCategory, onCategoryChange }: FilterBarPr
                                     cat === 'Dresses' ? 'Vestidos' : cat}
                 </button>
             ))}
-        </div>
+        </motion.div>
     );
 };
 

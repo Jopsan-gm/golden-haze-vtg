@@ -7,6 +7,7 @@ import { Product } from '@/types/product';
 import { getWhatsAppLink } from '@/utils/whatsapp';
 import { MessageCircle, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Footer from '@/components/Footer';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -39,7 +40,11 @@ export default function ProductDetail() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin"
+                />
             </div>
         );
     }
@@ -69,7 +74,11 @@ export default function ProductDetail() {
     };
 
     return (
-        <main className="min-h-screen bg-white">
+        <motion.main
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen bg-white"
+        >
             {/* Top Nav */}
             <nav className="p-4 flex items-center gap-4 bg-white sticky top-0 z-50 border-b border-gray-100">
                 <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -83,25 +92,32 @@ export default function ProductDetail() {
             {/* Main Content */}
             <div className="max-w-7xl mx-auto md:grid md:grid-cols-2 md:gap-8 md:p-8">
                 {/* Image Gallery */}
-                <div className="relative aspect-square bg-gray-50 overflow-hidden">
-                    <img
-                        src={product.images[currentImageIndex]}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                    />
+                <div className="relative aspect-square bg-white overflow-hidden">
+                    <AnimatePresence mode="wait">
+                        <motion.img
+                            key={currentImageIndex}
+                            src={product.images[currentImageIndex]}
+                            alt={product.name}
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className="w-full h-full object-cover"
+                        />
+                    </AnimatePresence>
 
                     {/* Navigation Arrows */}
                     {product.images.length > 1 && (
                         <>
                             <button
                                 onClick={prevImage}
-                                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md backdrop-blur-sm"
+                                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md backdrop-blur-sm z-10"
                             >
                                 <ChevronLeft className="w-6 h-6" />
                             </button>
                             <button
                                 onClick={nextImage}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md backdrop-blur-sm"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-md backdrop-blur-sm z-10"
                             >
                                 <ChevronRight className="w-6 h-6" />
                             </button>
@@ -109,7 +125,7 @@ export default function ProductDetail() {
                     )}
 
                     {/* Dots Indicator */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 focus:outline-none">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 focus:outline-none z-10">
                         {product.images.map((_, i) => (
                             <button
                                 key={i}
@@ -123,7 +139,11 @@ export default function ProductDetail() {
 
                 {/* Info Detail */}
                 <div className="p-6 flex flex-col gap-6">
-                    <div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         <span className="text-vintage-gold text-xs font-bold uppercase tracking-[0.2em] mb-2 block">
                             {product.category}
                         </span>
@@ -133,19 +153,28 @@ export default function ProductDetail() {
                         <div className="text-3xl font-bold text-gray-900">
                             ₡{product.price.toLocaleString()}
                         </div>
-                    </div>
+                    </motion.div>
 
                     <div className="h-px bg-gray-100 w-full" />
 
-                    <div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                    >
                         <h3 className="font-bold text-sm uppercase tracking-widest text-gray-800 mb-3">Descripción</h3>
                         <p className="text-gray-600 leading-loose">
                             {product.description}
                         </p>
-                    </div>
+                    </motion.div>
 
                     {/* WhatsApp Button Sticky on Mobile */}
-                    <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 md:static md:p-0 md:bg-transparent md:border-0 z-40">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 md:static md:p-0 md:bg-transparent md:border-0 z-40"
+                    >
                         <a
                             href={getWhatsAppLink(product)}
                             target="_blank"
@@ -155,13 +184,13 @@ export default function ProductDetail() {
                             <MessageCircle className="w-6 h-6" />
                             Comprar por WhatsApp
                         </a>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
             <div className="h-24 md:hidden" /> {/* Spacer for sticky button */}
 
             <Footer />
-        </main>
+        </motion.main>
     );
 }

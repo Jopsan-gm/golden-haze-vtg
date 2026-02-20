@@ -1,4 +1,4 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 import { Product } from '@/types/product';
 import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -7,18 +7,27 @@ interface ProductCardProps {
     product: Product;
 }
 
+const MotionLink = motion(Link);
+
 const ProductCard = ({ product }: ProductCardProps) => {
     return (
-        <Link
+        <MotionLink
             href={`/product/${product.id}`}
-            className="group bg-white overflow-hidden border border-gray-100 hover:shadow-lg transition-all duration-300 rounded-sm"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -5 }}
+            transition={{ duration: 0.5 }}
+            className="group bg-white overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow duration-300 rounded-sm block"
         >
             {/* Image Container */}
             <div className="relative aspect-square overflow-hidden bg-gray-50">
-                <img
+                <motion.img
                     src={product.images[0]}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-cover"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.6 }}
                     onError={(e) => {
                         (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?q=80&w=2070';
                     }}
@@ -30,11 +39,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 </div>
 
                 {product.is_sold_out && (
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center z-20"
+                    >
                         <span className="text-white uppercase text-xs font-bold border-2 border-white px-2 py-1 transform -rotate-12">
                             Agotado
                         </span>
-                    </div>
+                    </motion.div>
                 )}
             </div>
 
@@ -64,12 +77,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     </span>
                 </div>
 
-                <div className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-black text-white hover:bg-vintage-brown transition-colors text-xs font-bold uppercase tracking-wider rounded-sm">
+                <motion.div
+                    whileHover={{ backgroundColor: '#582F0E' }}
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-black text-white transition-colors text-xs font-bold uppercase tracking-wider rounded-sm"
+                >
                     <MessageCircle className="w-4 h-4" />
                     Lo quiero
-                </div>
+                </motion.div>
             </div>
-        </Link>
+        </MotionLink>
     );
 };
 
