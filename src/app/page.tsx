@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Hero from '@/components/Hero';
+import Navbar from '@/components/Navbar';
 import FilterBar from '@/components/FilterBar';
 import ProductGrid from '@/components/ProductGrid';
 import Footer from '@/components/Footer';
@@ -43,7 +44,7 @@ export default function Home() {
     return (
         <main className="min-h-screen">
             {/* Header/Nav would go here, omitting for simplicity or sticking to minimalist design */}
-
+            <Navbar />
             <Hero />
 
             <section className="bg-white relative z-20 rounded-t-3xl shadow-xl min-h-screen">

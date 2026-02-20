@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/utils/supabase';
 import { products as localProducts } from '@/data/products';
 
@@ -12,33 +13,8 @@ export default function AdminPage() {
     const [password, setPassword] = useState('');
     const [products, setProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-
-    // Migration function
-    const handleMigration = async () => {
-        if (!confirm('¿Estás seguro? Esto copiará los productos del código a la base de datos.')) return;
-        setLoading(true);
-        try {
-            // Prepare data for insertion (remove ID to let Supabase generate UUIDs or keep distinct)
-            const productsToInsert = localProducts.map(p => ({
-                name: p.name,
-                price: p.price,
-                description: p.description,
-                category: p.category,
-                images: p.images,
-                is_sold_out: false
-            }));
-
-            const { error } = await supabase.from('products').insert(productsToInsert);
-            if (error) throw error;
-
-            alert('¡Productos migrados exitosamente!');
-            fetchProducts();
-        } catch (error: any) {
-            alert('Error en la migración: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = React.useRef<HTMLInputElement>(null);
 
     // Form state
     const [formData, setFormData] = useState({
@@ -70,6 +46,32 @@ export default function AdminPage() {
         }
     }, [isAuthenticated]);
 
+    // Migration function
+    const handleMigration = async () => {
+        if (!confirm('¿Estás seguro? Esto copiará los productos del código a la base de datos.')) return;
+        setLoading(true);
+        try {
+            const productsToInsert = localProducts.map(p => ({
+                name: p.name,
+                price: p.price,
+                description: p.description,
+                category: p.category,
+                images: p.images,
+                is_sold_out: false
+            }));
+
+            const { error } = await supabase.from('products').insert(productsToInsert);
+            if (error) throw error;
+
+            alert('¡Productos migrados exitosamente!');
+            fetchProducts();
+        } catch (error: any) {
+            alert('Error en la migración: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleLogin = (e: React.FormEvent) => {
         e.preventDefault();
         if (password === ADMIN_PASSWORD) {
@@ -84,7 +86,7 @@ export default function AdminPage() {
         setLoading(true);
 
         try {
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('products')
                 .insert([
                     {
@@ -95,8 +97,7 @@ export default function AdminPage() {
                         images: formData.images.split(',').map(url => url.trim()),
                         is_sold_out: false
                     }
-                ])
-                .select();
+                ]);
 
             if (error) throw error;
 
@@ -146,30 +147,6 @@ export default function AdminPage() {
         }
     };
 
-    if (!isAuthenticated) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
-                <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-full max-w-sm">
-                    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Acceso Admin</h2>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Contraseña"
-                        className="w-full p-3 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-black"
-                    />
-                    <button type="submit" className="w-full bg-black text-white py-3 rounded hover:bg-gray-800 font-bold">
-                        Entrar
-                    </button>
-                </form>
-            </div>
-        );
-    }
-
-    // Image uploading state
-    const [uploading, setUploading] = useState(false);
-    const fileInputRef = React.useRef<HTMLInputElement>(null);
-
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files || e.target.files.length === 0) return;
 
@@ -198,7 +175,6 @@ export default function AdminPage() {
                 uploadedUrls.push(data.publicUrl);
             }
 
-            // Append new URLs to existing ones
             const currentImages = formData.images ? formData.images.split(',').map(u => u.trim()).filter(Boolean) : [];
             const newImages = [...currentImages, ...uploadedUrls].join(', ');
 
@@ -212,6 +188,35 @@ export default function AdminPage() {
         }
     };
 
+    if (!isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+                <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-sm relative">
+                    <Link
+                        href="/"
+                        className="absolute top-4 left-4 text-gray-400 hover:text-black transition-colors flex items-center gap-1 text-sm font-bold"
+                    >
+                        ← <span className="hidden sm:inline">Volver</span>
+                    </Link>
+                    <h2 className="text-2xl font-serif font-bold mb-6 text-center text-gray-800">Acceso Admin</h2>
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Contraseña"
+                            className="w-full p-3 border rounded focus:outline-none focus:ring-2 focus:ring-black"
+                            required
+                        />
+                        <button type="submit" className="w-full bg-black text-white py-3 rounded hover:bg-gray-800 font-bold">
+                            Entrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
             {/* Mobile Header */}
@@ -223,7 +228,6 @@ export default function AdminPage() {
             </div>
 
             <div className="max-w-2xl mx-auto p-4 space-y-8">
-
                 {/* Actions Toolbar */}
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between gap-4">
                     <p className="text-sm text-gray-500 font-medium">Gestión de Catálogo</p>
@@ -300,9 +304,7 @@ export default function AdminPage() {
 
                         <div className="pt-2">
                             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Fotos</label>
-
                             <div className="flex flex-col gap-3">
-                                {/* Gallery Upload Button */}
                                 <div className="flex gap-2">
                                     <input
                                         type="file"
@@ -333,7 +335,7 @@ export default function AdminPage() {
                                     <div className="bg-gray-50 p-3 rounded-lg flex items-center gap-2 overflow-x-auto">
                                         {formData.images.split(',').map((img, idx) => img && (
                                             <div key={idx} className="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden bg-white border border-gray-200 relative">
-                                                <img src={img.trim()} className="w-full h-full object-cover" />
+                                                <img src={img.trim()} className="w-full h-full object-cover" alt="Selected upload" />
                                             </div>
                                         ))}
                                         {formData.images.split(',').filter(Boolean).length > 0 && (
@@ -356,13 +358,12 @@ export default function AdminPage() {
                     </form>
                 </div>
 
-                {/* Inventory List (Mobile Cards) */}
+                {/* Inventory List */}
                 <div>
                     <h2 className="text-lg font-bold mb-4 px-2 text-gray-900">Inventario ({products.length})</h2>
                     <div className="grid grid-cols-1 gap-4">
                         {products.map((product) => (
                             <div key={product.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex gap-4 items-center">
-                                {/* Image Thumbnail */}
                                 <div className="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                     {product.images && product.images[0] ? (
                                         <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
@@ -376,7 +377,6 @@ export default function AdminPage() {
                                     )}
                                 </div>
 
-                                {/* Content */}
                                 <div className="flex-1 min-w-0">
                                     <h3 className="font-bold text-gray-900 truncate pr-4">{product.name}</h3>
                                     <p className="text-vintage-gold font-bold text-sm">₡{product.price.toLocaleString()}</p>
