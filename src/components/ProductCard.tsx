@@ -52,11 +52,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
                 {/* Status Badges */}
                 <div className="absolute top-2 left-0 flex flex-col gap-1 z-10">
-                    {product.condition_rating && (
-                        <div className="bg-white/95 backdrop-blur-sm text-black text-[9px] font-extrabold px-2 py-1 uppercase tracking-tight shadow-sm border-y border-r border-gray-100 rounded-r-sm">
-                            Condición: {product.condition_rating}/10
-                        </div>
-                    )}
                     {product.discount_price && (
                         <div className="bg-orange-500 text-white text-[9px] font-extrabold px-2 py-1 uppercase tracking-tight shadow-sm border-y border-r border-orange-600 rounded-r-sm">
                             ¡Oferta!

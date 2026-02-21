@@ -31,8 +31,6 @@ export default function AdminPage() {
         category: 'T-Shirts',
         images: '',
         discountPrice: '',
-        conditionRating: '10',
-        conditionNotes: '',
     });
 
     const fetchProducts = async () => {
@@ -112,16 +110,14 @@ export default function AdminPage() {
                         category: formData.category,
                         images: formData.images.split(',').map(url => url.trim()),
                         is_sold_out: false,
-                        discount_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
-                        condition_rating: parseInt(formData.conditionRating),
-                        condition_notes: formData.conditionNotes
+                        discount_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null
                     }
                 ]);
 
             if (error) throw error;
 
             showToast('Producto creado con éxito!', 'success');
-            setFormData({ name: '', price: '', description: '', category: 'T-Shirts', images: '', discountPrice: '', conditionRating: '10', conditionNotes: '' });
+            setFormData({ name: '', price: '', description: '', category: 'T-Shirts', images: '', discountPrice: '' });
             fetchProducts();
         } catch (error: any) {
             showToast('Error al crear producto: ' + error.message, 'error');
@@ -370,18 +366,6 @@ export default function AdminPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Estado (1-10)</label>
-                                <select
-                                    value={formData.conditionRating}
-                                    onChange={(e) => setFormData({ ...formData, conditionRating: e.target.value })}
-                                    className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium text-gray-600 appearance-none"
-                                >
-                                    {[...Array(10)].map((_, i) => (
-                                        <option key={i + 1} value={i + 1}>{i + 1}/10 {i + 1 === 10 ? '- Impecable' : i + 1 >= 8 ? '- Muy bueno' : i + 1 >= 6 ? '- Bueno' : '- Con detalles'}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
                                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Categoría</label>
                                 <select
                                     value={formData.category}
@@ -394,17 +378,6 @@ export default function AdminPage() {
                                     <option value="Accessories">Accesorios</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div>
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 block">Notas de Estado (Ej. Mancha pequeña)</label>
-                            <input
-                                type="text"
-                                value={formData.conditionNotes}
-                                onChange={(e) => setFormData({ ...formData, conditionNotes: e.target.value })}
-                                className="w-full p-3 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-black transition outline-none font-medium placeholder:text-gray-300"
-                                placeholder="Ninguno / Impecable"
-                            />
                         </div>
 
 

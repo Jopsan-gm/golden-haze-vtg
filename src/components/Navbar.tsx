@@ -18,44 +18,45 @@ const Navbar = () => {
 
     return (
         <>
-            {/* Main Navbar */}
-            <nav className="fixed top-0 left-0 w-full z-50 px-6 py-8 flex justify-between items-center bg-transparent pointer-events-none transition-all duration-300">
-                {/* Logo Area */}
-                <div className="pointer-events-auto">
-                    <Link href="/" className="block">
-                        <img
-                            src="/images/Golden-Haze-VTG-removebg-preview.png"
-                            alt="Golden Haze Vtg Logo"
-                            className="h-24 md:h-32 w-auto drop-shadow-2xl transition-transform hover:scale-105 active:scale-95"
-                        />
-                    </Link>
-                </div>
+            <nav className="fixed top-0 left-0 w-full z-50 transition-all duration-300 pointer-events-none">
+                <div className="max-w-[1600px] mx-auto px-6 md:px-12 py-4 md:py-6 flex justify-between items-center bg-transparent pointer-events-auto">
+                    {/* Logo Area */}
+                    <div className="pointer-events-auto">
+                        <Link href="/" className="block">
+                            <img
+                                src="/images/Golden-Haze-VTG-removebg-preview.png"
+                                alt="Golden Haze Vtg Logo"
+                                className="h-16 md:h-26 w-auto drop-shadow-2xl transition-transform hover:scale-105 active:scale-95"
+                            />
+                        </Link>
+                    </div>
 
-                {/* Action Buttons */}
-                <div className="flex items-center gap-3 pointer-events-auto">
-                    {/* Cart Button */}
-                    <button
-                        onClick={toggleCart}
-                        className="relative w-10 h-10 flex items-center justify-center bg-black/20 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/40 transition-all"
-                    >
-                        <ShoppingBag className="w-5 h-5" />
-                        {cart.length > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-vintage-gold text-black text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                                {cart.length}
-                            </span>
-                        )}
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-3 pointer-events-auto">
+                        {/* Cart Button */}
+                        <button
+                            onClick={toggleCart}
+                            className="relative w-10 h-10 flex items-center justify-center bg-black/20 backdrop-blur-md rounded-full border border-white/10 text-white hover:bg-black/40 transition-all font-bold"
+                        >
+                            <ShoppingBag className="w-5 h-5" />
+                            {cart.length > 0 && (
+                                <span className="absolute -top-1 -right-1 bg-vintage-gold text-black text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                                    {cart.length}
+                                </span>
+                            )}
+                        </button>
 
-                    {/* Hamburger Button */}
-                    <button
-                        onClick={toggleMenu}
-                        className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none group bg-black/20 backdrop-blur-md rounded-full border border-white/10"
-                        aria-label="Menu"
-                    >
-                        <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2' : ''}`} />
-                        <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-                        <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2' : ''}`} />
-                    </button>
+                        {/* Hamburger Button */}
+                        <button
+                            onClick={toggleMenu}
+                            className="w-10 h-10 flex flex-col justify-center items-center gap-1 focus:outline-none group bg-black/20 backdrop-blur-md rounded-full border border-white/10 hover:bg-black/30 transition-all"
+                            aria-label="Menu"
+                        >
+                            <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`} />
+                            <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
+                            <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`} />
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -173,6 +174,22 @@ const Navbar = () => {
                         >
                             Catálogo
                         </Link>
+
+                        <button
+                            onClick={() => {
+                                toggleMenu();
+                                toggleCart();
+                            }}
+                            className="flex items-center justify-between text-xl font-serif font-bold hover:text-vintage-gold transition-colors text-left"
+                        >
+                            <span>Mi Carrito</span>
+                            {cart.length > 0 && (
+                                <span className="bg-black text-white text-[10px] px-2 py-0.5 rounded-full ml-3">
+                                    {cart.length}
+                                </span>
+                            )}
+                        </button>
+
                         <Link
                             href="#nosotros"
                             onClick={toggleMenu}

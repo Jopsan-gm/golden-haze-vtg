@@ -9,6 +9,4 @@ export interface Product {
     images: string[];
     is_sold_out?: boolean;
     discount_price?: number;
-    condition_rating?: number; // 1-10
-    condition_notes?: string;
 }

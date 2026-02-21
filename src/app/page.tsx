@@ -47,7 +47,7 @@ export default function Home() {
             <Navbar />
             <Hero />
 
-            <section className="bg-white relative z-20 rounded-t-3xl shadow-xl min-h-screen">
+            <section className="bg-white relative z-20 -mt-16 md:-mt-24 rounded-t-[40px] shadow-[0_-10px_40px_rgba(0,0,0,0.08)] min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     <FilterBar
                         categories={categories}

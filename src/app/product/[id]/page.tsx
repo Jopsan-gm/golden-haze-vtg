@@ -126,7 +126,7 @@ export default function ProductDetail() {
             </nav>
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto md:grid md:grid-cols-2 md:gap-8 md:p-8">
+            <div className="max-w-5xl mx-auto md:grid md:grid-cols-[1.2fr_1fr] md:gap-12 md:p-8">
                 {/* Image Gallery */}
                 <div className="relative aspect-square bg-white overflow-hidden">
                     <AnimatePresence mode="wait">
@@ -203,28 +203,6 @@ export default function ProductDetail() {
 
                     <div className="h-px bg-gray-100 w-full" />
 
-                    {/* Condition Section */}
-                    {product.condition_rating && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="bg-gray-50 p-4 rounded-lg flex flex-col gap-2 border border-gray-100"
-                        >
-                            <div className="flex justify-between items-center">
-                                <h3 className="font-bold text-xs uppercase tracking-[0.2em] text-gray-500">Estado del Tesoro</h3>
-                                <span className="bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                                    {product.condition_rating}/10
-                                </span>
-                            </div>
-                            {product.condition_notes && (
-                                <p className="text-sm text-gray-600 italic">
-                                    "{product.condition_notes}"
-                                </p>
-                            )}
-                        </motion.div>
-                    )}
-
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -247,8 +225,8 @@ export default function ProductDetail() {
                             onClick={() => product && addToCart(product)}
                             disabled={product ? isInCart(product.id) : true}
                             className={`w-full flex items-center justify-center gap-3 py-4 rounded-sm font-bold uppercase tracking-widest transition-all duration-300 shadow-lg ${product && isInCart(product.id)
-                                    ? 'bg-gray-100 text-gray-400 cursor-default'
-                                    : 'bg-white text-black border border-black hover:bg-gray-50'
+                                ? 'bg-gray-100 text-gray-400 cursor-default'
+                                : 'bg-white text-black border border-black hover:bg-gray-50'
                                 }`}
                         >
                             <ShoppingBag className="w-5 h-5" />

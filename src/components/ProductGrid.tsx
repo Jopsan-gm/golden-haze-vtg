@@ -48,7 +48,8 @@ const ProductGrid = ({ products, isLoading }: ProductGridProps) => {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-2 md:px-8 pb-20"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 px-4 md:px-12 max-w-[1500px] mx-auto pb-12"
+            id="catalogo"
         >
             {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
