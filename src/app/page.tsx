@@ -55,7 +55,7 @@ export default function Home() {
                         onCategoryChange={setActiveCategory}
                     />
 
-                    <ProductGrid products={filteredProducts} />
+                    <ProductGrid products={filteredProducts} isLoading={loading} />
                 </div>
             </section>
 

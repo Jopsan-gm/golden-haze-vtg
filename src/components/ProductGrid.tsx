@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion';
 import { Product } from '@/types/product';
 import ProductCard from './ProductCard';
+import ProductSkeleton from './ProductSkeleton';
 
 interface ProductGridProps {
     products: Product[];
+    isLoading?: boolean;
 }
 
 const containerVariants = {
@@ -16,7 +18,17 @@ const containerVariants = {
     }
 };
 
-const ProductGrid = ({ products }: ProductGridProps) => {
+const ProductGrid = ({ products, isLoading }: ProductGridProps) => {
+    if (isLoading) {
+        return (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6 px-2 md:px-8 pb-20">
+                {[...Array(8)].map((_, i) => (
+                    <ProductSkeleton key={i} />
+                ))}
+            </div>
+        );
+    }
+
     if (products.length === 0) {
         return (
             <motion.div

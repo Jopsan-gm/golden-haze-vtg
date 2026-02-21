@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Product } from '@/types/product';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface ProductCardProps {
     product: Product;
@@ -10,6 +11,9 @@ interface ProductCardProps {
 const MotionLink = motion(Link);
 
 const ProductCard = ({ product }: ProductCardProps) => {
+    const { toggleWishlist, isInWishlist } = useWishlist();
+    const isLoved = isInWishlist(product.id);
+
     return (
         <MotionLink
             href={`/product/${product.id}`}
@@ -33,18 +37,40 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     }}
                 />
 
-                {/* Promo Badge */}
-                <div className="absolute top-2 left-0 bg-yellow-400 text-[10px] font-bold px-2 py-0.5 rounded-r-sm shadow-sm z-10">
-                    PROMO XTRA
+                {/* Wishlist Button */}
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        toggleWishlist(product.id);
+                    }}
+                    className="absolute top-2 right-2 z-30 p-2 rounded-full bg-white/80 backdrop-blur-md shadow-sm transition-all hover:bg-white hover:scale-110 group/heart"
+                >
+                    <Heart
+                        className={`w-3.5 h-3.5 transition-colors ${isLoved ? 'fill-red-500 text-red-500' : 'text-gray-400 group-hover/heart:text-red-400'}`}
+                    />
+                </button>
+
+                {/* Status Badges */}
+                <div className="absolute top-2 left-0 flex flex-col gap-1 z-10">
+                    {product.condition_rating && (
+                        <div className="bg-white/95 backdrop-blur-sm text-black text-[9px] font-extrabold px-2 py-1 uppercase tracking-tight shadow-sm border-y border-r border-gray-100 rounded-r-sm">
+                            Condición: {product.condition_rating}/10
+                        </div>
+                    )}
+                    {product.discount_price && (
+                        <div className="bg-orange-500 text-white text-[9px] font-extrabold px-2 py-1 uppercase tracking-tight shadow-sm border-y border-r border-orange-600 rounded-r-sm">
+                            ¡Oferta!
+                        </div>
+                    )}
                 </div>
 
                 {product.is_sold_out && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="absolute inset-0 bg-black/40 flex items-center justify-center z-20"
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center z-20 backdrop-blur-[2px]"
                     >
-                        <span className="text-white uppercase text-xs font-bold border-2 border-white px-2 py-1 transform -rotate-12">
+                        <span className="text-white uppercase text-xs font-bold border-2 border-white px-2 py-1 transform -rotate-12 tracking-widest shadow-2xl">
                             Agotado
                         </span>
                     </motion.div>
